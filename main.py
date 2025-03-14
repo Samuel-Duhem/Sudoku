@@ -1,9 +1,8 @@
-from tkinter import *
-from tkinter.messagebox import *
-from Sudoku import *
-from Jeu import *
-from multiple_choice import *
-from Generator import *
+from tkinter import Tk, Frame, Button, Label
+from Sudoku import resoudre
+from Jeu import Jeu
+from multiple_choice import OptionDialog
+from Generator import sudokuGenerator
 from random import randint
 def color_picker(button,case):
     if case.occupant==0:
@@ -167,3 +166,4 @@ root.mainloop()
 # commentaires
 # déffinir le terrain pour le résoudre soi même+ vérif coloré dessus
 # vérif si la grille a une solution
+#Qand on génère une grille, automatiquement stocker le résultat
