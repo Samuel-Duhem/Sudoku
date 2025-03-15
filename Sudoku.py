@@ -23,7 +23,7 @@ def subDiv(Pointeur):
         if  Pointeur[1] in [6,7,8]:
             Pointeur[2]=9
     return Pointeur
-def avancer(Pointeur:list,sens:int,case:case,base=False):
+def avancer(Pointeur:list,sens:int,case:Case,base=False):
     if base:
         if sens==1:
             Pointeur[1]+=1
@@ -58,7 +58,6 @@ def resoudre(j:Jeu):
     temp=j
     Pointeur=[0,0,1]
     '''le pointeur est défini par les coordonnées et la sous division'''
-    remov=False
     sens=1
     # for k in range(64):
     '''on vérifie si la grille est réalisable'''
@@ -70,16 +69,15 @@ def resoudre(j:Jeu):
     
     while True :
         if j.terrain[Pointeur[0]][Pointeur[1]].base==False:
-            for a in range (1):
+            for _ in range (1):
                 if j.terrain[Pointeur[0]][Pointeur[1]].possible==[]:
                     if sens == -1:
                         break
                     else:
                         j.terrain[Pointeur[0]][Pointeur[1]].possible= [i for i in range(1,len(j.terrain)+1)]
                 while j.terrain[Pointeur[0]][Pointeur[1]].possible!=[]:
-                    remov==False
                     i=j.terrain[Pointeur[0]][Pointeur[1]].possible[0]
-                    if not j.CheckLigne(Pointeur[0],i) and not j.CheckColone(Pointeur[1],i) and not j.CheckSubDiv(Pointeur[2],i) :
+                    if not j.check_ligne(Pointeur[0],i) and not j.check_colone(Pointeur[1],i) and not j.check_subdiv(Pointeur[2],i) :
                         sens=1
                         break
                     else:
@@ -97,7 +95,7 @@ def resoudre(j:Jeu):
 
 if __name__=="__main__":
     iJeu1=Jeu()
-    iJeu1.SetTerrain([
+    iJeu1.set_terrain([
         [0,0,0,0,0,0,6,0,2],
         [0,6,2,8,7,0,0,3,4],
         [3,4,1,9,0,0,0,7,8],
@@ -109,7 +107,7 @@ if __name__=="__main__":
         [0,1,5,2,8,9,0,6,0]
     ])
     iJeu2=Jeu()
-    iJeu2.SetTerrain([
+    iJeu2.set_terrain([
         [0,0,1,0,0,0,0,0,0],
         [8,0,0,0,0,0,0,9,4],
         [0,9,0,0,0,0,0,0,0],
@@ -121,7 +119,7 @@ if __name__=="__main__":
         [0,1,0,0,0,3,0,0,0]
     ])
     iJeu3=Jeu()
-    iJeu3.SetTerrain([
+    iJeu3.set_terrain([
     [8,7,5,3,6,2,9,1,4],
     [0,0,3,0,0,0,0,0,0],
     [0,0,0,0,0,5,0,0,0],
@@ -133,7 +131,7 @@ if __name__=="__main__":
     [0,0,0,0,0,0,0,0,0]
     ])
     iJeu4=Jeu()
-    iJeu4.SetTerrain([
+    iJeu4.set_terrain([
     [9,4,0,0,3,8,0,0,0],
     [0,0,0,0,0,0,9,6,0],
     [0,0,0,0,0,0,0,0,0],
@@ -146,5 +144,5 @@ if __name__=="__main__":
     ])
 
     # print(iJeu3)
-    print(resoudre(iJeu3))
+    print(resoudre(iJeu3)[1])
     # print(iJeu3)

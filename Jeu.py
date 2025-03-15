@@ -1,7 +1,7 @@
-from Case import *
+from Case import Case
 class Jeu:
     def __init__(self):
-        m=[[case(0) for i in range(9)]for j in range(9)]
+        m=[[Case(0) for _ in range(9)]for _ in range(9)]
         self.terrain=m
         self.subdiv={
 
@@ -18,17 +18,17 @@ class Jeu:
         }
 
 
-    def CheckLigne(self,l,x):
+    def check_ligne(self,l,x):
         temp=[]
         for i in range(len(self.terrain)):
             temp.append(self.terrain[l][i].occupant)
         return x in temp
-    def CheckColone(self,c,x):
+    def check_colone(self,c,x):
         temp=[]
         for i in range(len(self.terrain)):
             temp.append(self.terrain[i][c].occupant)
         return x in temp
-    def CheckSubDiv(self, n:int, x:int):
+    def check_subdiv(self, n:int, x:int):
         for ligne in self.subdiv[n]:
             for case in ligne:
                 if x==case.occupant: 
@@ -49,14 +49,14 @@ class Jeu:
 
         }
 
-    def SetTerrain(self,matrice):
+    def set_terrain(self,matrice):
         for i in range(len(matrice)):
             for j in range(len(matrice)):
                 if matrice[i][j]!=0:
                     base=True
                 else:
                     base=False
-                self.terrain[i][j]=case(occupant=matrice[i][j],base=base)
+                self.terrain[i][j]=Case(occupant=matrice[i][j],base=base)
         self.update()
     
     def fini(self):

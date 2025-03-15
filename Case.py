@@ -1,5 +1,5 @@
 
-class case:
+class Case:
 
     def __init__(self,occupant=0,base=False):
         self.possible=[i for i in range(1,10)]

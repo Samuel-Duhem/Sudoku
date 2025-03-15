@@ -27,55 +27,41 @@ def color_picker(button,case):
         button.config(bg='#ff595e')
         
 monjeu=Jeu()
-def remplir(frame,monjeu:Jeu,Soluce):
-    buttons=[]
+def remplir(frame, monjeu: Jeu, soluce: bool):
+    buttons = []
+    padx_values = {2: (1, 3), 3: (3, 1), 5: (1, 3), 6: (3, 1)}
+    pady_values = {2: (1, 3), 3: (3, 1), 5: (1, 3), 6: (3, 1)}
     for c in range(9):
         row = []
-        if c==2:
-            padx=(1,3)
-        elif c==3:
-            padx=(3,1)
-        elif c==5:
-            padx=(1,3)
-        elif c==6:
-            padx=(3,1)
-        else:
-            padx=(1,1)
+        padx = padx_values.get(c, (1, 1))
         for r in range(9):
-            if r==2:
-                pady=(1,3)
-            elif r==3:
-                pady=(3,1)
-            elif r==5:
-                pady=(1,3)
-            elif r==6:
-                pady=(3,1)
-            else:
-                pady=(1,1)
-            occupant=monjeu.terrain[r][c].occupant
+            pady = pady_values.get(r, (1, 1))
+            occupant = monjeu.terrain[r][c].occupant
             button = Button(
                 frame,
                 text=str(occupant),
                 width=2,
                 height=1
             )
-            button.grid(row=r, column=c,padx=padx,pady=pady)
+            button.grid(row=r, column=c, padx=padx, pady=pady)
             row.append(button)
         buttons.append(row)
     for row in range(len(buttons)):
         for col in range(len(buttons[row])):
-            if Soluce==False:
-                buttons[row][col].config(command=lambda row=row, col=col: ChoixNombre(buttons,row, col))
-            color_picker(buttons[row][col],monjeu.terrain[col][row])
+            if not soluce:
+                buttons[row][col].config(command=lambda row=row, col=col: choix_nombre(buttons, row, col))
+            color_picker(buttons[row][col], monjeu.terrain[col][row])
+
+
 
 def solution():
     global monjeu
     print(monjeu)
     monjeu,soluce=resoudre(monjeu)
     print(soluce)
-    Frame_Soluce=Frame(root,  width=650,  height=400,  bg='#7f7f7f')
-    Frame_Soluce.grid(row=0,  column=2,  padx=50,  pady=20)
-    remplir(Frame_Soluce,soluce,Soluce=True)
+    frame_soluce=Frame(root,  width=650,  height=400,  bg='#7f7f7f')
+    frame_soluce.grid(row=0,  column=2,  padx=50,  pady=20)
+    remplir(frame_soluce,soluce,soluce=True)
 
     bottom_frame_right  =  Frame(root,  width=200,  height=  400,  bg='#7f7f7f')
     bottom_frame_right.grid(row=1,  column=2,  padx=50,  pady=20)
@@ -100,7 +86,7 @@ def init():
 
     for i in range(5):
         Button(left_frame,text=str(i+1),command=lambda i=i, top_frame=top_frame: generate(top_frame,i)).grid(row=i+1,column=0,padx=10,pady=10)
-    remplir(top_frame,monjeu,Soluce=False)
+    remplir(top_frame,monjeu,soluce=False)
     return (bottom_frame,top_frame,monjeu)
 root = Tk(screenName='Soduku')
 root.title("Sudoku")
@@ -140,7 +126,7 @@ def generate(frame,i):
     monjeu=sudokuGenerator(k)
     remplir(frame,monjeu,False)
     print(monjeu)
-def ChoixNombre(buttons,row,col):
+def choix_nombre(buttons,row,col):
     global monjeu
     possible=monjeu.terrain[row][col].possible
     dlg = OptionDialog(root,'Select a number',"Close= reset ",possible)
