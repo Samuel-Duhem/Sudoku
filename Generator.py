@@ -1,7 +1,7 @@
 # Python program to generate a valid sudoku 
 # with k empty cells
 from Jeu import Jeu
-from Sudoku import subDiv
+from Sudoku import subdiv
 import random 
 
 # Returns false if given 3x3 block contains num
@@ -30,9 +30,9 @@ def fill_box(grid, row, col):
 # Check if it's safe to put num in the cell (i, j)
 # Ensure num is not used in row, column, or box
 def check_if_safe(grid, i, j, num):
-    return (not grid.CheckLigne(i, num) and 
-            not grid.CheckColone(j, num) and 
-            not grid.CheckSubDiv( subDiv([i,j,0])[2], num))
+    return (not grid.check_ligne(i, num) and 
+            not grid.check_colone(j, num) and 
+            not grid.check_subdiv( subdiv([i,j,0])[2], num))
 
 # Fill the diagonal 3x3 matrices
 # The diagonal blocks are filled to simplify the process
@@ -85,7 +85,7 @@ def remove_k_digits(grid, k):
         j = cell_id % 9
 
         # Remove the digit if the cell is not already empty
-        if grid[i][j]  != 0:
+        if grid[i][j].occupant  != 0:
             # Empty the cell
             grid[i][j].occupant = 0
             grid[i][j].base= False

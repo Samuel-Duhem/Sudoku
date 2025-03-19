@@ -2,7 +2,7 @@ from tkinter import Tk, Frame, Button, Label
 from Sudoku import resoudre
 from Jeu import Jeu
 from multiple_choice import OptionDialog
-from Generator import sudokuGenerator
+from Generator import sudoku_generator
 from random import randint
 def color_picker(button,case):
     if case.occupant==0:
@@ -97,7 +97,7 @@ Gibberish=init()
 bottom_frame=Gibberish[0]
 top_frame=Gibberish[1]
 monjeu=Gibberish[2]
-monjeu.SetTerrain([
+monjeu.set_terrain([
         [0,0,0,0,0,0,6,0,2],
         [0,6,2,8,7,0,0,3,4],
         [3,4,1,9,0,0,0,7,8],
@@ -123,7 +123,7 @@ def generate(frame,i):
         k=randint(50,53)
     elif i==4:
         k=randint(54,64)
-    monjeu=sudokuGenerator(k)
+    monjeu=sudoku_generator(k)
     remplir(frame,monjeu,False)
     print(monjeu)
 def choix_nombre(buttons,row,col):

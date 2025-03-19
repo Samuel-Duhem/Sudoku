@@ -1,59 +1,49 @@
-from Jeu import *
-from Case import *
-def subDiv(Pointeur):
-    if Pointeur[0] in [0,1,2]:
-        if Pointeur[1] in [0,1,2]:
-            Pointeur[2]=1
-        if  Pointeur[1] in [3,4,5]:
-            Pointeur[2]=2
-        if  Pointeur[1] in [6,7,8]:
-            Pointeur[2]=3
-    if Pointeur[0] in [3,4,5]:
-        if Pointeur[1] in [0,1,2]:
-            Pointeur[2]=4
-        if  Pointeur[1] in [3,4,5]:
-            Pointeur[2]=5
-        if  Pointeur[1] in [6,7,8]:
-            Pointeur[2]=6
-    if Pointeur[0] in [6,7,8]:
-        if Pointeur[1] in [0,1,2]:
-            Pointeur[2]=7
-        if  Pointeur[1] in [3,4,5]:
-            Pointeur[2]=8
-        if  Pointeur[1] in [6,7,8]:
-            Pointeur[2]=9
-    return Pointeur
-def avancer(Pointeur:list,sens:int,case:Case,base=False):
+from Jeu import Jeu
+from Case import Case
+
+def subdiv(pointeur):
+    subdivisions = {
+        (0, 0): 1, (0, 1): 1, (0, 2): 1, (1, 0): 1, (1, 1): 1, (1, 2): 1, (2, 0): 1, (2, 1): 1, (2, 2): 1,
+        (0, 3): 2, (0, 4): 2, (0, 5): 2, (1, 3): 2, (1, 4): 2, (1, 5): 2, (2, 3): 2, (2, 4): 2, (2, 5): 2,
+        (0, 6): 3, (0, 7): 3, (0, 8): 3, (1, 6): 3, (1, 7): 3, (1, 8): 3, (2, 6): 3, (2, 7): 3, (2, 8): 3,
+        (3, 0): 4, (3, 1): 4, (3, 2): 4, (4, 0): 4, (4, 1): 4, (4, 2): 4, (5, 0): 4, (5, 1): 4, (5, 2): 4,
+        (3, 3): 5, (3, 4): 5, (3, 5): 5, (4, 3): 5, (4, 4): 5, (4, 5): 5, (5, 3): 5, (5, 4): 5, (5, 5): 5,
+        (3, 6): 6, (3, 7): 6, (3, 8): 6, (4, 6): 6, (4, 7): 6, (4, 8): 6, (5, 6): 6, (5, 7): 6, (5, 8): 6,
+        (6, 0): 7, (6, 1): 7, (6, 2): 7, (7, 0): 7, (7, 1): 7, (7, 2): 7, (8, 0): 7, (8, 1): 7, (8, 2): 7,
+        (6, 3): 8, (6, 4): 8, (6, 5): 8, (7, 3): 8, (7, 4): 8, (7, 5): 8, (8, 3): 8, (8, 4): 8, (8, 5): 8,
+        (6, 6): 9, (6, 7): 9, (6, 8): 9, (7, 6): 9, (7, 7): 9, (7, 8): 9, (8, 6): 9, (8, 7): 9, (8, 8): 9,
+    }
+    pointeur[2] = subdivisions[(pointeur[0], pointeur[1])]
+    return pointeur
+def avancer(pointeur: list, sens: int, case: Case, base=False):
     if base:
-        if sens==1:
-            Pointeur[1]+=1
-            if Pointeur[1]==9:
-                Pointeur[1]=0
-                Pointeur[0]+=1
-            Pointeur=subDiv(Pointeur)
-            return
-        else:
-            Pointeur[1]-=1
-            if Pointeur[1]==-1:
-                Pointeur[1]=8
-                Pointeur[0]-=1
-            Pointeur=subDiv(Pointeur)
-            return
-    if sens==1:
+        avancer_base(pointeur, sens)
+    else:
+        avancer_non_base(pointeur, sens, case)
+
+def avancer_base(pointeur: list, sens: int):
+    if sens == 1:
+        pointeur[1] += 1
+        if pointeur[1] == 9:
+            pointeur[1] = 0
+            pointeur[0] += 1
+    else:
+        pointeur[1] -= 1
+        if pointeur[1] == -1:
+            pointeur[1] = 8
+            pointeur[0] -= 1
+    pointeur = subdiv(pointeur)
+
+def avancer_non_base(pointeur: list, sens: int, case: Case):
+    if sens == 1:
         case.arrivee(case.possible[0])
         case.possible.pop(0)
-        Pointeur[1]+=1
-        if Pointeur[1]==9:
-            Pointeur[1]=0
-            Pointeur[0]+=1
-        Pointeur=subDiv(Pointeur)
+        pointeur[1] += 1
+        if pointeur[1] == 9:
+            pointeur[1] = 0
+            pointeur[0] += 1
     else:
         case.depart()
-        Pointeur[1]-=1
-        if Pointeur[1]==-1:
-            Pointeur[1]=8
-            Pointeur[0]-=1
-        Pointeur=subDiv(Pointeur)
 def resoudre(j:Jeu):
     temp=j
     Pointeur=[0,0,1]
