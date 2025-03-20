@@ -1,97 +1,66 @@
-from Jeu import *
-from Case import *
-def subDiv(Pointeur):
-    if Pointeur[0] in [0,1,2]:
-        if Pointeur[1] in [0,1,2]:
-            Pointeur[2]=1
-        if  Pointeur[1] in [3,4,5]:
-            Pointeur[2]=2
-        if  Pointeur[1] in [6,7,8]:
-            Pointeur[2]=3
-    if Pointeur[0] in [3,4,5]:
-        if Pointeur[1] in [0,1,2]:
-            Pointeur[2]=4
-        if  Pointeur[1] in [3,4,5]:
-            Pointeur[2]=5
-        if  Pointeur[1] in [6,7,8]:
-            Pointeur[2]=6
-    if Pointeur[0] in [6,7,8]:
-        if Pointeur[1] in [0,1,2]:
-            Pointeur[2]=7
-        if  Pointeur[1] in [3,4,5]:
-            Pointeur[2]=8
-        if  Pointeur[1] in [6,7,8]:
-            Pointeur[2]=9
-    return Pointeur
-def avancer(Pointeur:list,sens:int,case:Case,base=False):
+from Jeu import Jeu
+from Case import Case
+def sub_div(pointeur):
+    row_group = pointeur[0] // 3
+    col_group = pointeur[1] // 3
+    pointeur[2] = row_group * 3 + col_group + 1
+    return pointeur
+def avancer(pointeur: list, sens: int, case: Case, base=False):
+    def move_forward():
+        pointeur[1] += 1
+        if pointeur[1] == 9:
+            pointeur[1] = 0
+            pointeur[0] += 1
+        return sub_div(pointeur)
+
+    def move_backward():
+        pointeur[1] -= 1
+        if pointeur[1] == -1:
+            pointeur[1] = 8
+            pointeur[0] -= 1
+        return sub_div(pointeur)
+
     if base:
-        if sens==1:
-            Pointeur[1]+=1
-            if Pointeur[1]==9:
-                Pointeur[1]=0
-                Pointeur[0]+=1
-            Pointeur=subDiv(Pointeur)
-            return
-        else:
-            Pointeur[1]-=1
-            if Pointeur[1]==-1:
-                Pointeur[1]=8
-                Pointeur[0]-=1
-            Pointeur=subDiv(Pointeur)
-            return
-    if sens==1:
+        pointeur = move_forward() if sens == 1 else move_backward()
+        return
+
+    if sens == 1:
         case.arrivee(case.possible[0])
         case.possible.pop(0)
-        Pointeur[1]+=1
-        if Pointeur[1]==9:
-            Pointeur[1]=0
-            Pointeur[0]+=1
-        Pointeur=subDiv(Pointeur)
+        pointeur = move_forward()
     else:
         case.depart()
-        Pointeur[1]-=1
-        if Pointeur[1]==-1:
-            Pointeur[1]=8
-            Pointeur[0]-=1
-        Pointeur=subDiv(Pointeur)
+        pointeur = move_backward()
 def resoudre(j:Jeu):
     temp=j
-    Pointeur=[0,0,1]
+    pointeur=[0,0,1]
     '''le pointeur est défini par les coordonnées et la sous division'''
-    remov=False
     sens=1
-    # for k in range(64):
     '''on vérifie si la grille est réalisable'''
-    # for i in range(len(j.terrain)):
-    #     for ii in range(len(j.terrain[i])):
-    #         local=j.terrain[i][ii].occupant
-    #         if j.CheckLigne(Pointeur[0],local) or j.CheckColone(Pointeur[1],local) or j.CheckSubDiv(Pointeur[2],local) :
-    #             return "Grille imopossible"
     
     while True :
-        if j.terrain[Pointeur[0]][Pointeur[1]].base==False:
-            for a in range (1):
-                if j.terrain[Pointeur[0]][Pointeur[1]].possible==[]:
+        if j.terrain[pointeur[0]][pointeur[1]].base==False:
+            for _ in range (1):
+                if j.terrain[pointeur[0]][pointeur[1]].possible==[]:
                     if sens == -1:
                         break
                     else:
-                        j.terrain[Pointeur[0]][Pointeur[1]].possible= [i for i in range(1,len(j.terrain)+1)]
-                while j.terrain[Pointeur[0]][Pointeur[1]].possible!=[]:
-                    remov==False
-                    i=j.terrain[Pointeur[0]][Pointeur[1]].possible[0]
-                    if not j.check_ligne(Pointeur[0],i) and not j.check_colone(Pointeur[1],i) and not j.check_subdiv(Pointeur[2],i) :
+                        j.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,len(j.terrain)+1)]
+                while j.terrain[pointeur[0]][pointeur[1]].possible!=[]:
+                    i=j.terrain[pointeur[0]][pointeur[1]].possible[0]
+                    if not j.check_ligne(pointeur[0],i) and not j.check_colone(pointeur[1],i) and not j.check_subdiv(pointeur[2],i) :
                         sens=1
                         break
                     else:
-                        j.terrain[Pointeur[0]][Pointeur[1]].possible.pop(0)
+                        j.terrain[pointeur[0]][pointeur[1]].possible.pop(0)
                         sens=-1
-            avancer(Pointeur,sens,j.terrain[Pointeur[0]][Pointeur[1]])
+            avancer(pointeur,sens,j.terrain[pointeur[0]][pointeur[1]])
             j.update()
         else:
-            j.terrain[Pointeur[0]][Pointeur[1]].possible= [i for i in range(1,10) if i not in [j.terrain[Pointeur[0]][Pointeur[1]].occupant]]
-            avancer(Pointeur,sens,j.terrain[Pointeur[0]][Pointeur[1]],True)
+            j.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,10) if i not in [j.terrain[pointeur[0]][pointeur[1]].occupant]]
+            avancer(pointeur,sens,j.terrain[pointeur[0]][pointeur[1]],True)
             j.update()
-        if Pointeur==[9,0,9]:
+        if pointeur==[9,0,9]:
             return temp,j
     
 
