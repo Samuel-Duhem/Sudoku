@@ -116,4 +116,6 @@ if __name__ == "__main__":
     sudoku = sudoku_generator(k)
 
     # Print the generated Sudoku puzzle
+    
     print(sudoku)
+    
