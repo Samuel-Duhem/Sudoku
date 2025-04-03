@@ -1,7 +1,7 @@
+class Case:
+    '''Class that define a box with the possibles occupant 
+    wich, for the soduku or all positive figures'''
 
-class case:
-'''Class that define a box with the possibles occupant 
-wich, for the soduku or all positive figures'''
     def __init__(self,occupant=0,base=False):
         self.possible=[i for i in range(1,10)]
         self.occupant=occupant
