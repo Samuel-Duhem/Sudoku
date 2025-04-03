@@ -31,14 +31,13 @@ def avancer(pointeur: list, sens: int, case: Case, base=False):
     else:
         case.depart()
         pointeur = move_backward()
-    
 def resoudre(j:Jeu):
     temp=j
     pointeur=[0,0,1]
     '''le pointeur est défini par les coordonnées et la sous division'''
     sens=1
-    if not j.est_possible():
-        return False
+    '''on vérifie si la grille est réalisable'''
+    
     while True :
         if j.terrain[pointeur[0]][pointeur[1]].base==False:
             for _ in range (1):
@@ -49,6 +48,7 @@ def resoudre(j:Jeu):
                         j.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,len(j.terrain)+1)]
                 while j.terrain[pointeur[0]][pointeur[1]].possible!=[]:
                     i=j.terrain[pointeur[0]][pointeur[1]].possible[0]
+                    print(pointeur)
                     if not j.check_ligne(pointeur[0],i) and not j.check_colone(pointeur[1],i) and not j.check_subdiv(pointeur[2],i) :
                         sens=1
                         break
@@ -61,6 +61,7 @@ def resoudre(j:Jeu):
             j.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,10) if i not in [j.terrain[pointeur[0]][pointeur[1]].occupant]]
             avancer(pointeur,sens,j.terrain[pointeur[0]][pointeur[1]],True)
             j.update()
+        print(pointeur)
         if pointeur==[9,0,10]:
             return temp,j
     
@@ -99,7 +100,7 @@ if __name__=="__main__":
     [2,0,0,5,0,0,0,9,0],
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,7,0,0],
-    [0,3,0,0,5,0,0,0,9],
+    [0,3,0,0,5,0,0,0,0],
     [0,0,0,0,0,0,0,0,0]
     ])
     iJeu4=Jeu()
@@ -116,5 +117,5 @@ if __name__=="__main__":
     ])
 
     # print(iJeu3)
-    print(resoudre(iJeu3))
+    print(resoudre(iJeu3)[1])
     # print(iJeu3)

@@ -113,6 +113,7 @@ monjeu.set_terrain([
 remplir(top_frame,monjeu,False)
 def generate(frame,i):
     global monjeu
+    global soluce
     if i==0:
         k=randint(20,34)
     elif i==1:
@@ -123,7 +124,7 @@ def generate(frame,i):
         k=randint(50,53)
     elif i==4:
         k=randint(54,64)
-    monjeu=sudoku_generator(k)
+    monjeu,soluce=sudoku_generator(k)
     remplir(frame,monjeu,False)
     print(monjeu)
 def choix_nombre(buttons,row,col):

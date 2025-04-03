@@ -65,10 +65,10 @@ class Jeu:
                 if self.terrain[i][j].libre():
                     return False
         return True
-    def est_possible(self):
-        for i in range(len(self.terrain)-1):
-            for j in range(len(self.terrain)-1):
-                if self.terrain[i][j].base==True and (self.terrain[i][j].possible==[] or self.check_ligne(j,self.terrain[i][j].occupant) or self.check_colone(i,self.terrain[i][j].occupant) or self.check_subdiv((i// 3)*3+(j // 3)+1,self.terrain[i][j].occupant)):
+    def is_solvable(self):
+        for i in self.terrain:
+            for j in i and j.base :
+                if not self.check_ligne(i, self.terrain[i][j].occupant) or not self.check_colone(j, self.terrain[i][j].occupant) or not self.check_subdiv(self.subdiv_num(i, j), self.terrain[i][j].occupant):
                     return False
         return True
     def __str__(self):

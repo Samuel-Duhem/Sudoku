@@ -1,7 +1,5 @@
-# Python program to generate a valid sudoku 
-# with k empty cells
 from Jeu import Jeu
-from Sudoku import subdiv
+from Sudoku import sub_div
 import random 
 
 # Returns false if given 3x3 block contains num
@@ -29,10 +27,10 @@ def fill_box(grid, row, col):
 
 # Check if it's safe to put num in the cell (i, j)
 # Ensure num is not used in row, column, or box
-def check_if_safe(grid, i, j, num):
+def check_if_safe(grid:Jeu, i, j, num):
     return (not grid.check_ligne(i, num) and 
             not grid.check_colone(j, num) and 
-            not grid.check_subdiv( subdiv([i,j,0])[2], num))
+            not grid.check_subdiv( sub_div([i,j,0])[2], num))
 
 # Fill the diagonal 3x3 matrices
 # The diagonal blocks are filled to simplify the process
@@ -75,47 +73,34 @@ def fil_remaining(grid, i, j):
 def remove_k_digits(grid, k):
     while k > 0:
         
-        # Pick a random cell
+        '''Pick a random cell'''
         cell_id = random.randint(0, 80)
 
-        # Get the row index
+        '''Get the row index'''
         i = cell_id // 9
 
-        # Get the column index
+        '''Get the column index'''
         j = cell_id % 9
 
-        # Remove the digit if the cell is not already empty
+        '''Remove the digit if the cell is not already empty'''
         if grid[i][j].occupant  != 0:
             # Empty the cell
             grid[i][j].occupant = 0
             grid[i][j].base= False
-            # Decrease the count of digits to remove
+            '''Decrease the count of digits to remove'''
             k -= 1
 
-# Generate a Sudoku grid with K empty cells
 def sudoku_generator(k):
-    
-    # Initialize an empty 9x9 grid
+    ''' Generate a Sudoku with k empty cells'''
     grid=Jeu()
-    # Fill the diagonal 3x3 matrices
     fill_diagonal(grid)
-    # Fill the remaining blocks in the grid
     fil_remaining(grid, 0, 0)
-    # Remove K digits randomly to create the puzzle
+    soluce=grid
     remove_k_digits(grid.terrain, k)
 
-    return grid
+    return grid,soluce
 
 if __name__ == "__main__":
-    
-    # Seed the random number generator
-    # random.seed()
-
-    # Set the number of empty cells
     k = 64
     sudoku = sudoku_generator(k)
-
-    # Print the generated Sudoku puzzle
-    
     print(sudoku)
-    
