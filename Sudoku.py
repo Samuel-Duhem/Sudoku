@@ -49,7 +49,7 @@ def resoudre(j:Jeu):
                 while j.terrain[pointeur[0]][pointeur[1]].possible!=[]:
                     i=j.terrain[pointeur[0]][pointeur[1]].possible[0]
                     print(pointeur)
-                    if not j.check_ligne(pointeur[0],i) and not j.check_colone(pointeur[1],i) and not j.check_subdiv(pointeur[2],i) :
+                    if not j.check_ligne(pointeur[0],i) and not j.check_column(pointeur[1],i) and not j.check_subdiv(pointeur[2],i) :
                         sens=1
                         break
                     else:
@@ -117,5 +117,6 @@ if __name__=="__main__":
     ])
 
     # print(iJeu3)
-    print(resoudre(iJeu3)[1])
+    print(iJeu3.is_solvable())
+    # print(resoudre(iJeu3)[1])
     # print(iJeu3)

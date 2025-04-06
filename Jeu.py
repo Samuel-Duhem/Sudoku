@@ -16,14 +16,19 @@ class Jeu:
             9:[self.terrain[6][6:9],self.terrain[7][6:9],self.terrain[8][6:9]]
 
         }
+        self.soluce=None
 
-
+    def get_subdiv(self,i,j):
+        row = i // 3
+        col = j // 3
+        return row*3 + col+1
     def check_ligne(self,l,x):
         temp=[]
         for i in range(len(self.terrain)):
             temp.append(self.terrain[l][i].occupant)
         return x in temp
-    def check_colone(self,c,x):
+    def check_column(self,c,x):
+        '''A function that checvk if there is an occuration of a number in a column'''
         temp=[]
         for i in range(len(self.terrain)):
             temp.append(self.terrain[i][c].occupant)
@@ -58,18 +63,13 @@ class Jeu:
                     base=False
                 self.terrain[i][j]=Case(occupant=matrice[i][j],base=base)
         self.update()
-    
-    def fini(self):
-        for i in range(len(self.terrain)-1):
-            for j in range(len(self.terrain)-1):
-                if self.terrain[i][j].libre():
-                    return False
-        return True
+
     def is_solvable(self):
-        for i in self.terrain:
-            for j in i and j.base :
-                if not self.check_ligne(i, self.terrain[i][j].occupant) or not self.check_colone(j, self.terrain[i][j].occupant) or not self.check_subdiv(self.subdiv_num(i, j), self.terrain[i][j].occupant):
-                    return False
+        for i in range(9):
+            for j in range(9) :
+                if self.terrain[i][j].base:
+                    if self.check_ligne(i, self.terrain[i][j].occupant) or  self.check_column(j, self.terrain[i][j].occupant) or self.check_subdiv(self.get_subdiv(i, j), self.terrain[i][j].occupant):
+                        return False
         return True
     def __str__(self):
         total= (' ___________________________________ '+'\n')

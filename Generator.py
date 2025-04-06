@@ -29,7 +29,7 @@ def fill_box(grid, row, col):
 # Ensure num is not used in row, column, or box
 def check_if_safe(grid:Jeu, i, j, num):
     return (not grid.check_ligne(i, num) and 
-            not grid.check_colone(j, num) and 
+            not grid.check_column(j, num) and 
             not grid.check_subdiv( sub_div([i,j,0])[2], num))
 
 # Fill the diagonal 3x3 matrices
@@ -95,10 +95,10 @@ def sudoku_generator(k):
     grid=Jeu()
     fill_diagonal(grid)
     fil_remaining(grid, 0, 0)
-    soluce=grid
+    grid.soluce=grid.terrain
     remove_k_digits(grid.terrain, k)
 
-    return grid,soluce
+    return grid
 
 if __name__ == "__main__":
     k = 64

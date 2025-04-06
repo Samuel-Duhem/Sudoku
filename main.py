@@ -124,7 +124,7 @@ def generate(frame,i):
         k=randint(50,53)
     elif i==4:
         k=randint(54,64)
-    monjeu,soluce=sudoku_generator(k)
+    monjeu=sudoku_generator(k)
     remplir(frame,monjeu,False)
     print(monjeu)
 def choix_nombre(buttons,row,col):
