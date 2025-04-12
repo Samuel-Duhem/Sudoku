@@ -1,7 +1,7 @@
-from Jeu import Jeu
+from Board import Board
 from Sudoku import sub_div
-import random 
-
+import random as r
+import time
 # Returns false if given 3x3 block contains num
 # Ensure the number is not used in the box
 def unused_in_box(grid, row_start, col_start, num):
@@ -17,7 +17,7 @@ def fill_box(grid, row, col):
         for j in range(3):
             while True:
                 # Generate a random number between 1 and 9
-                num = random.randint(1, 9)
+                num = r.randint(1, 9)
                 if unused_in_box(grid, row, col, num):
                     break
             grid.terrain[row + i][col + j].occupant = num
@@ -27,7 +27,7 @@ def fill_box(grid, row, col):
 
 # Check if it's safe to put num in the cell (i, j)
 # Ensure num is not used in row, column, or box
-def check_if_safe(grid:Jeu, i, j, num):
+def check_if_safe(grid:Board, i, j, num):
     return (not grid.check_ligne(i, num) and 
             not grid.check_column(j, num) and 
             not grid.check_subdiv( sub_div([i,j,0])[2], num))
@@ -44,6 +44,7 @@ def fill_diagonal(grid):
 # Fill remaining blocks in the grid
 # Recursively fill the remaining cells with valid numbers
 def fil_remaining(grid, i, j):
+    
     # If we've reached the end of the grid
     if i == 9:
         return True
@@ -68,35 +69,24 @@ def fil_remaining(grid, i, j):
     
     return False
 
-# Remove K digits randomly from the grid
-# This will create a Sudoku puzzle by removing digits
-def remove_k_digits(grid, k):
+def remove_k_digits(grid:Board, k):
+    '''take a borad and remove k digits from it'''
     while k > 0:
-        
-        '''Pick a random cell'''
-        cell_id = random.randint(0, 80)
-
-        '''Get the row index'''
+        cell_id = r.randint(0, 80)
         i = cell_id // 9
-
-        '''Get the column index'''
         j = cell_id % 9
-
-        '''Remove the digit if the cell is not already empty'''
-        if grid[i][j].occupant  != 0:
-            # Empty the cell
-            grid[i][j].occupant = 0
-            grid[i][j].base= False
-            '''Decrease the count of digits to remove'''
+        if grid.terrain[i][j].occupant  != 0:
+            grid.terrain[i][j].occupant = 0
+            grid.terrain[i][j].base= False
             k -= 1
 
 def sudoku_generator(k):
     ''' Generate a Sudoku with k empty cells'''
-    grid=Jeu()
+    grid=Board()
     fill_diagonal(grid)
     fil_remaining(grid, 0, 0)
     grid.soluce=grid.terrain
-    remove_k_digits(grid.terrain, k)
+    remove_k_digits(grid, k)
 
     return grid
 
