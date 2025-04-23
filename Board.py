@@ -1,4 +1,5 @@
 from Box import Box
+import pickle
 class Board:
     '''
         - Define a Board with the terrain, a square matix a 9X9 Boxes.
@@ -19,7 +20,13 @@ class Board:
             8:[self.terrain[6][3:6],self.terrain[7][3:6],self.terrain[8][3:6]],
             9:[self.terrain[6][6:9],self.terrain[7][6:9],self.terrain[8][6:9]]
         }
-        self.soluce=None
+        self.filename=None
+
+    def save_soluce(self,item,filename):
+        self.filename=filename
+        f = open(self.filename, 'wb')
+        pickle.dump(item, f)
+        f.close
         
     def get_subdiv(self,i:int,j:int,pos=False):
         '''
@@ -27,6 +34,15 @@ class Board:
             - Return the subdiv of 2 coordinates.
             If pos is enable, also return the position inside the subdiv    
         '''
+    def get_soluce(self):
+        if self.filename==None:
+            print('No filename')
+            return None
+        with open(self.filename,'rb') as f:
+            soluce=pickle.load(f)
+            return soluce
+        
+
         row = i // 3
         col = j // 3
         if pos==True:
@@ -52,7 +68,6 @@ class Board:
         for i in range(len(self.terrain)):
             temp.append(self.terrain[i][c].occupant)
         return x in temp
-    
     def check_subdiv(self, n:int, x:int):
         '''
             - A function that check if there is an occuration of a number in a subdiv
@@ -101,7 +116,7 @@ class Board:
             - Return True if the board is solvable
         '''
         for i in range(9):
-            for j in range(9):
+            for j in range(9) :
                 if self.terrain[i][j].base:
                     # we empty the box to check if there is another one of the occupant
                     temp=self.terrain[i][j]
@@ -112,7 +127,6 @@ class Board:
                         return False
                     self.terrain[i][j]=temp
         return True
-    
     def __str__(self):
         total= (' ___________________________________ '+'\n')
         for ligne in self.terrain:

@@ -1,12 +1,12 @@
-from tkinter import Tk, Frame, Button, Label
-from Sudoku import resoudre
+from tkinter import Tk, Frame, Button, Label,Toplevel
 from Board import Board
 from multiple_choice import OptionDialog
 from Generator import sudoku_generator
 from random import randint
+
 def color_picker(button,box):
     '''define the color based on the number of the box'''
-    if box.occupant==0:
+    if box.occupant in [0,'']:
         button.config(bg='#b5a6c9')
     if box.occupant==1:
         button.config(bg='#6a4c93')
@@ -38,6 +38,8 @@ def remplir(frame, my_game:Board, soluce: bool):
         for r in range(9):
             pady = pady_values.get(r, (1, 1))
             occupant = my_game.terrain[r][c].occupant
+            if occupant== 0:
+                occupant=''
             button = Button(
                 frame,
                 text=str(occupant),
@@ -67,6 +69,8 @@ def solution():
     bottom_frame_right  =  Frame(root,  width=200,  height=  400,  bg='#7f7f7f')
     bottom_frame_right.grid(row=1,  column=2,  padx=50,  pady=20)
     Button(bottom_frame_right,command=reset, text ='Réinitialiser le terrain').grid(row=0,column=5,padx=30,  pady=20)
+    lock(bottom_frame)
+    lock(top_frame)
 
 def init():
     global my_game
@@ -114,7 +118,6 @@ my_game.set_terrain([
 remplir(top_frame,my_game,False)
 def generate(frame,i):
     global my_game
-    global soluce
     if i==0:
         k=randint(20,34)
     elif i==1:
@@ -125,7 +128,7 @@ def generate(frame,i):
         k=randint(50,53)
     elif i==4:
         k=randint(54,64)
-    my_game=sudoku_generator(k)
+    my_game=sudoku_generator(k) # if we want multiple game, need a file parameter to store different solution
     remplir(frame,my_game,False)
     print(my_game)
 def choix_nombre(buttons,row,col):
@@ -139,17 +142,32 @@ def choix_nombre(buttons,row,col):
     else :
         my_game.terrain[col][row].base=False
     color_picker(buttons[row][col], my_game.terrain[col][row])
-
+def lock(frame):
+    for widget in frame.winfo_children():
+        widget.config(state='disabled')
 def reset():
     global bottom_frame, top_frame,my_game
     for widget in root.winfo_children():
         widget.destroy()
+
     # Call the init() function to reinitialize theBoard
     (bottom_frame, top_frame,my_game) = init()
 
-
+def main_menu():
+    root=Tk(screenName='Soduku')
+    root.title("Sudoku")
+    # root.minsize(300,300)
+    root.eval('tk::PlaceWindow . center')
+    root.config(bg='#0A2342')
+    left_frame  =  Frame(root,  width=200,  height=400,  bg='#7f7f7f')
+    left_frame.grid(row=0,  column=0,  padx=50,  pady=20)
+    Button(left_frame,text='Choisir la difficulté').grid(row=0,column=0,padx=10,pady=10)
+    right_frame  =  Frame(root,  width=200,  height=400,  bg='#7f7f7f')
+    right_frame.grid(row=0,  column=2,  padx=50,  pady=20)
+    Button(right_frame,command=lambda:init(), text='Solution').grid(row=0,column=0,padx=10,pady=10)
+    root.mainloop()
+main_menu()
 root.mainloop()
-# zéro == rien 
 # générer une grille reset
 # commentaires
 # déffinir le terrain pour le résoudre soi même+ vérif coloré dessus

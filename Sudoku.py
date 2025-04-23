@@ -5,7 +5,7 @@ def sub_div(pointer):
     col_group = pointer[1] // 3
     pointer[2] = row_group * 3 + col_group + 1
     return pointer
-def avancer(pointer: list, sens: int, box: Box, base=False):
+def avancer(pointer: list, direction: int, box: Box, base=False):
     def move_forward():
         pointer[1] += 1
         if pointer[1] == 9:
@@ -21,99 +21,58 @@ def avancer(pointer: list, sens: int, box: Box, base=False):
         return sub_div(pointer)
 
     if base:
-        pointer = move_forward() if sens == 1 else move_backward()
+        pointer = move_forward() if direction == 1 else move_backward()
         return
 
-    if sens == 1:
+    if direction == 1:
         box.arrival(box.possible[0])
         box.possible.pop(0)
         pointer = move_forward()
     else:
         box.leave()
         pointer = move_backward()
-
-def resoudre(j:Board):
-    temp=j
+def solve(j:Board):
     pointeur=[0,0,1]
     '''le pointeur est défini par les coordonnées et la sous division'''
-    sens=1
-    '''on vérifie si la grille est réalisable'''
+
+    direction=1
+    soluce=j.get_soluce()
+    if soluce!=None:
+        return soluce
+    '''we check if the grid is solvable( function in the next commit)'''
     
+    j.save_soluce(j,filename='Soluce.pkl')
+    # print(j.filename)
+    game:Board=j.get_soluce()
+    print(game)
     while True :
-        if j.terrain[pointeur[0]][pointeur[1]].base==False:
+        if game.terrain[pointeur[0]][pointeur[1]].base==False:
             for _ in range (1):
-                if j.terrain[pointeur[0]][pointeur[1]].possible==[]:
-                    if sens == -1:
+                if game.terrain[pointeur[0]][pointeur[1]].possible==[]:
+                    if direction == -1:
                         break
                     else:
-                        j.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,len(j.terrain)+1)]
-                while j.terrain[pointeur[0]][pointeur[1]].possible!=[]:
-                    i=j.terrain[pointeur[0]][pointeur[1]].possible[0]
+                        game.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,len(game.terrain)+1)]
+                while game.terrain[pointeur[0]][pointeur[1]].possible!=[]:
+                    i=game.terrain[pointeur[0]][pointeur[1]].possible[0]
                     print(pointeur)
-                    if not j.check_ligne(pointeur[0],i) and not j.check_column(pointeur[1],i) and not j.check_subdiv(pointeur[2],i) :
-                        sens=1
+                    if not game.check_ligne(pointeur[0],i) and not game.check_column(pointeur[1],i) and not game.check_subdiv(pointeur[2],i) :
+                        direction=1
                         break
                     else:
-                        j.terrain[pointeur[0]][pointeur[1]].possible.pop(0)
-                        sens=-1
+                        game.terrain[pointeur[0]][pointeur[1]].possible.pop(0)
+                        direction=-1
+            avancer(pointeur,direction,game.terrain[pointeur[0]][pointeur[1]])
+            game.update()
         else:
-            j.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,10) if i not in [j.terrain[pointeur[0]][pointeur[1]].occupant]]
-        j.update(pointeur[0],pointeur[1])
-        avancer(pointeur,sens,j.terrain[pointeur[0]][pointeur[1]],True)
+            game.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,10) if i not in [j.terrain[pointeur[0]][pointeur[1]].occupant]]
+            avancer(pointeur,direction,game.terrain[pointeur[0]][pointeur[1]],True)
+            game.update()
         print(pointeur)
         if pointeur==[9,0,10]:
-            return temp,j
-def resoudre(j: Board):
-    temp = j
-    pointeur = [0, 0, 1]  # [row, col, sub]
-    sens = 1
-
-    def reset_possibilities():
-        return list(range(1, len(j.terrain) + 1))
-
-    def is_valid(j, row, col, sub, value):
-        return (
-            not j.check_ligne(row, value)
-            and not j.check_column(col, value)
-            and not j.check_subdiv(sub, value)
-        )
-
-    def fill_base_cell(cell):
-        cell.possible = [i for i in range(1, 10) if i != cell.occupant]
-
-    def try_possibilities(cell, row, col, sub):
-        nonlocal sens
-        if not cell.possible:
-            if sens == -1:
-                return
-            cell.possible = reset_possibilities()
-        while cell.possible:
-            value = cell.possible[0]
-            print(pointeur)
-            if is_valid(j, row, col, sub, value):
-                sens = 1
-                return
-            cell.possible.pop(0)
-            sens = -1
-
-    while True:
-        row, col, sub = pointeur
-        cell = j.terrain[row][col]
-
-        if not cell.base:
-            try_possibilities(cell, row, col, sub)
-        else:
-            fill_base_cell(cell)
-
-        j.update(row, col)
-        avancer(pointeur, sens, cell, True)
-        print(pointeur)
-
-        if pointeur == [9, 0, 10]:
-            return temp, j
-
-
-
+            j.save_soluce(game,'Soluce.pkl')
+            
+            return j
         
 if __name__=="__main__":
     Game1=Board()
@@ -165,7 +124,8 @@ if __name__=="__main__":
         [4,0,0,0,0,3,5,0,0]
     ])
 
-    # print(Game3)
-    print(Game1.is_solvable())
-    print(resoudre(Game1))
-    # print(Game3)
+    # print(Board3)
+    print(solve(Board1))
+    print(Board1)
+    print(Board1.get_soluce())
+    # print(Board3)

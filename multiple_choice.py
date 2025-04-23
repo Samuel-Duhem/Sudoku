@@ -35,7 +35,7 @@ class OptionDialog(Toplevel):
         self.result = optionSelected
         self.destroy()
     def cancel(self):
-        self.result = 0
+        self.result = ''
         self.destroy()
 
 
