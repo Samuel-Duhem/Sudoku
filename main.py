@@ -4,6 +4,9 @@ from Board import Board
 from multiple_choice import OptionDialog
 from Generator import sudoku_generator
 from random import randint
+
+from Sudoku import solve
+
 def color_picker(button,box):
     '''define the color based on the number of the box'''
     if box.occupant==0:
@@ -58,7 +61,7 @@ def remplir(frame, my_game:Board, soluce: bool):
 def solution():
     global my_game
     print(my_game)
-    soluce=resoudre(my_game)
+    soluce=solve(my_game)
     print(soluce)
     frame_soluce=Frame(root,  width=650,  height=400,  bg='#7f7f7f')
     frame_soluce.grid(row=0,  column=2,  padx=50,  pady=20)

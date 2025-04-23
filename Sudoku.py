@@ -63,55 +63,6 @@ def resoudre(j:Board):
         print(pointeur)
         if pointeur==[9,0,10]:
             return temp,j
-def resoudre(j: Board):
-    temp = j
-    pointeur = [0, 0, 1]  # [row, col, sub]
-    sens = 1
-
-    def reset_possibilities():
-        return list(range(1, len(j.terrain) + 1))
-
-    def is_valid(j, row, col, sub, value):
-        return (
-            not j.check_ligne(row, value)
-            and not j.check_column(col, value)
-            and not j.check_subdiv(sub, value)
-        )
-
-    def fill_base_cell(cell):
-        cell.possible = [i for i in range(1, 10) if i != cell.occupant]
-
-    def try_possibilities(cell, row, col, sub):
-        nonlocal sens
-        if not cell.possible:
-            if sens == -1:
-                return
-            cell.possible = reset_possibilities()
-        while cell.possible:
-            value = cell.possible[0]
-            print(pointeur)
-            if is_valid(j, row, col, sub, value):
-                sens = 1
-                return
-            cell.possible.pop(0)
-            sens = -1
-
-    while True:
-        row, col, sub = pointeur
-        cell = j.terrain[row][col]
-
-        if not cell.base:
-            try_possibilities(cell, row, col, sub)
-        else:
-            fill_base_cell(cell)
-
-        j.update(row, col)
-        avancer(pointeur, sens, cell, True)
-        print(pointeur)
-
-        if pointeur == [9, 0, 10]:
-            return temp, j
-
 
 
         

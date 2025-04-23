@@ -1,4 +1,5 @@
 from Box import Box
+import pickle
 class Board:
     '''
         - Define a Board with the terrain, a square matix a 9X9 Boxes.
@@ -27,6 +28,20 @@ class Board:
             - Return the subdiv of 2 coordinates.
             If pos is enable, also return the position inside the subdiv    
         '''
+        row = i // 3
+        col = j // 3
+        if pos==True:
+            return row*3 + col+1, i-row*3,j-col*3
+        return row*3 + col+1
+    def get_soluce(self):
+        if self.filename==None:
+            print('No filename')
+            return None
+        with open(self.filename,'rb') as f:
+            soluce=pickle.load(f)
+            return soluce
+        
+
         row = i // 3
         col = j // 3
         if pos==True:
