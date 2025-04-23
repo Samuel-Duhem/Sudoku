@@ -31,69 +31,93 @@ def avancer(pointer: list, sens: int, box: Box, base=False):
     else:
         box.leave()
         pointer = move_backward()
-def solve(j: Board):
-    pointer = [0, 0, 1]
-    '''the pointer is defined as the coordinate and the sub-division'''
-    sens = 1
-    if not j.is_solvable():
-        return False
 
-    if j.soluce is not None:
-        j.terrain = j.soluce
-        return j
-
-    while True:
-        if not process_cell(j, pointer, sens):
-            break
-        print(pointer)
-        if pointer == [9, 0, 10]:
-            return j
-
-
-def process_cell(j: Board, pointer: list, sens: int) -> bool:
-    cell = j.terrain[pointer[0]][pointer[1]]
-    if not cell.base:
-        if not handle_non_base_cell(j, pointer, sens, cell):
-            return False
-    else:
-        handle_base_cell(j, pointer, cell)
-    return True
-
-
-def handle_non_base_cell(j: Board, pointer: list, sens: int, cell: Box) -> bool:
-    if not cell.possible:
-        if sens == -1:
-            return False
-        cell.possible = [i for i in range(1, len(j.terrain) + 1)]
-
-    while cell.possible:
-        i = cell.possible[0]
-        print(pointer)
-        if is_valid_move(j, pointer, i):
-            sens = 1
-            break
+def resoudre(j:Board):
+    temp=j
+    pointeur=[0,0,1]
+    '''le pointeur est défini par les coordonnées et la sous division'''
+    sens=1
+    '''on vérifie si la grille est réalisable'''
+    
+    while True :
+        if j.terrain[pointeur[0]][pointeur[1]].base==False:
+            for _ in range (1):
+                if j.terrain[pointeur[0]][pointeur[1]].possible==[]:
+                    if sens == -1:
+                        break
+                    else:
+                        j.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,len(j.terrain)+1)]
+                while j.terrain[pointeur[0]][pointeur[1]].possible!=[]:
+                    i=j.terrain[pointeur[0]][pointeur[1]].possible[0]
+                    print(pointeur)
+                    if not j.check_ligne(pointeur[0],i) and not j.check_column(pointeur[1],i) and not j.check_subdiv(pointeur[2],i) :
+                        sens=1
+                        break
+                    else:
+                        j.terrain[pointeur[0]][pointeur[1]].possible.pop(0)
+                        sens=-1
         else:
+            j.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,10) if i not in [j.terrain[pointeur[0]][pointeur[1]].occupant]]
+        j.update(pointeur[0],pointeur[1])
+        avancer(pointeur,sens,j.terrain[pointeur[0]][pointeur[1]],True)
+        print(pointeur)
+        if pointeur==[9,0,10]:
+            return temp,j
+def resoudre(j: Board):
+    temp = j
+    pointeur = [0, 0, 1]  # [row, col, sub]
+    sens = 1
+
+    def reset_possibilities():
+        return list(range(1, len(j.terrain) + 1))
+
+    def is_valid(j, row, col, sub, value):
+        return (
+            not j.check_ligne(row, value)
+            and not j.check_column(col, value)
+            and not j.check_subdiv(sub, value)
+        )
+
+    def fill_base_cell(cell):
+        cell.possible = [i for i in range(1, 10) if i != cell.occupant]
+
+    def try_possibilities(cell, row, col, sub):
+        nonlocal sens
+        if not cell.possible:
+            if sens == -1:
+                return
+            cell.possible = reset_possibilities()
+        while cell.possible:
+            value = cell.possible[0]
+            print(pointeur)
+            if is_valid(j, row, col, sub, value):
+                sens = 1
+                return
             cell.possible.pop(0)
             sens = -1
 
-    avancer(pointer, sens, cell)
-    j.update()
-    return True
+    while True:
+        row, col, sub = pointeur
+        cell = j.terrain[row][col]
+
+        if not cell.base:
+            try_possibilities(cell, row, col, sub)
+        else:
+            fill_base_cell(cell)
+
+        j.update(row, col)
+        avancer(pointeur, sens, cell, True)
+        print(pointeur)
+
+        if pointeur == [9, 0, 10]:
+            return temp, j
 
 
-def handle_base_cell(j: Board, pointer: list, cell: Box):
-    cell.possible = [i for i in range(1, 10) if i not in [cell.occupant]]
-    avancer(pointer, 1, cell, True)
-    j.update()
 
-
-def is_valid_move(j: Board, pointer: list, value: int) -> bool:
-    return not j.check_ligne(pointer[0], value) and not j.check_column(pointer[1], value) and not j.check_subdiv(pointer[2], value)
-    
-
+        
 if __name__=="__main__":
-    Board1=Board()
-    Board1.set_terrain([
+    Game1=Board()
+    Game1.set_terrain([
         [0,0,0,0,0,0,6,0,2],
         [0,6,2,8,7,0,0,3,4],
         [3,4,1,9,0,0,0,7,8],
@@ -104,8 +128,8 @@ if __name__=="__main__":
         [0,0,0,0,3,7,0,0,1],
         [0,1,5,2,8,9,0,6,0]
     ])
-    Board2=Board()
-    Board2.set_terrain([
+    Game2=Board()
+    Game2.set_terrain([
         [0,0,1,0,0,0,0,0,0],
         [8,0,0,0,0,0,0,9,4],
         [0,9,0,0,0,0,0,0,0],
@@ -116,8 +140,8 @@ if __name__=="__main__":
         [4,3,0,0,0,9,0,0,0],
         [0,1,0,0,0,3,0,0,0]
     ])
-    Board3=Board()
-    Board3.set_terrain([
+    Game3=Board()
+    Game3.set_terrain([
         [8,7,5,3,6,2,9,1,4],
         [0,0,3,0,0,0,0,0,0],
         [0,0,0,0,0,5,0,0,0],
@@ -128,8 +152,8 @@ if __name__=="__main__":
         [0,3,0,0,5,0,0,0,0],
         [0,0,0,0,0,0,0,0,0]
     ])
-    Board4=Board()
-    Board4.set_terrain([
+    Game4=Board()
+    Game4.set_terrain([
         [9,4,0,0,3,8,0,0,0],
         [0,0,0,0,0,0,9,6,0],
         [0,0,0,0,0,0,0,0,0],
@@ -141,6 +165,7 @@ if __name__=="__main__":
         [4,0,0,0,0,3,5,0,0]
     ])
 
-    # print(Board3)
-    print(solve(Board1))
-    # print(Board3)
+    # print(Game3)
+    print(Game1.is_solvable())
+    print(resoudre(Game1))
+    # print(Game3)

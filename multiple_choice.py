@@ -50,7 +50,7 @@ if __name__ == '__main__':
     Button(root,text='Dialog',command=run).pack()
     root.mainloop()
     
-    '''
+'''
     Class from scotty3785
     https://stackoverflow.com/questions/58006764/is-there-a-way-to-ask-for-multiple-choices-in-a-popup-like-messagebox-do/58009290#58009290
-    '''
+'''

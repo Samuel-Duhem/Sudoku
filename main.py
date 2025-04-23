@@ -1,5 +1,5 @@
 from tkinter import Tk, Frame, Button, Label
-from Sudoku import solve
+from Sudoku import resoudre
 from Board import Board
 from multiple_choice import OptionDialog
 from Generator import sudoku_generator
@@ -58,7 +58,7 @@ def remplir(frame, my_game:Board, soluce: bool):
 def solution():
     global my_game
     print(my_game)
-    my_game=solve(my_game)
+    soluce=resoudre(my_game)
     print(soluce)
     frame_soluce=Frame(root,  width=650,  height=400,  bg='#7f7f7f')
     frame_soluce.grid(row=0,  column=2,  padx=50,  pady=20)
@@ -138,12 +138,12 @@ def choix_nombre(buttons,row,col):
         my_game.terrain[col][row].base=True
     else :
         my_game.terrain[col][row].base=False
+    color_picker(buttons[row][col], my_game.terrain[col][row])
 
 def reset():
     global bottom_frame, top_frame,my_game
     for widget in root.winfo_children():
         widget.destroy()
-
     # Call the init() function to reinitialize theBoard
     (bottom_frame, top_frame,my_game) = init()
 
