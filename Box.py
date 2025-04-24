@@ -11,7 +11,7 @@ class Box:
 
     def free(self):
         ''' 
-            - We check if the box is empty\n
+            - We check if the box is empty
             - Return True if it is
         '''
         return self.occupant ==0
@@ -19,7 +19,7 @@ class Box:
 
     def leave(self):
         '''
-            - Make the box empty\n
+            - Make the box empty
             - Return nothing
         '''
         self.occupant=0

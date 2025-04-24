@@ -1,9 +1,20 @@
 from tkinter import Tk, Frame, Button, Label,Toplevel
 from Board import Board
-from multiple_choice import OptionDialog
+from multiple_choice import number_picker
 from Generator import sudoku_generator
 from random import randint
+from Sudoku import solve
+def center(item:Tk):
+    window_height = 500
+    window_width = 900
 
+    screen_width = item.winfo_screenwidth()
+    screen_height = item.winfo_screenheight()
+
+    x_cordinate = int((screen_width/2) - (window_width/2))
+    y_cordinate = int((screen_height/2) - (window_height/2))
+
+    item.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
 def color_picker(button,box):
     '''define the color based on the number of the box'''
     if box.occupant in [0,'']:
@@ -28,7 +39,7 @@ def color_picker(button,box):
         button.config(bg='#ff595e')
         
 my_game=Board()
-def remplir(frame, my_game:Board, soluce: bool):
+def fill(frame, my_game:Board, soluce: bool):
     buttons = []
     padx_values = {2: (1, 3), 3: (3, 1), 5: (1, 3), 6: (3, 1)}
     pady_values = {2: (1, 3), 3: (3, 1), 5: (1, 3), 6: (3, 1)}
@@ -46,6 +57,7 @@ def remplir(frame, my_game:Board, soluce: bool):
                 width=2,
                 height=1
             )
+            if occupant!='' : button.config(state='disabled')
             button.grid(row=r, column=c, padx=padx, pady=pady)
             row.append(button)
         buttons.append(row)
@@ -60,15 +72,15 @@ def remplir(frame, my_game:Board, soluce: bool):
 def solution():
     global my_game
     print(my_game)
-    soluce=resoudre(my_game)
+    soluce=solve(my_game)
     print(soluce)
     frame_soluce=Frame(root,  width=650,  height=400,  bg='#7f7f7f')
-    frame_soluce.grid(row=0,  column=2,  padx=50,  pady=20)
-    remplir(frame_soluce,soluce,soluce=True)
+    frame_soluce.grid(row=1,  column=2,  padx=50,  pady=20)
+    fill(frame_soluce,soluce,soluce=True)
 
     bottom_frame_right  =  Frame(root,  width=200,  height=  400,  bg='#7f7f7f')
-    bottom_frame_right.grid(row=1,  column=2,  padx=50,  pady=20)
-    Button(bottom_frame_right,command=reset, text ='Réinitialiser le terrain').grid(row=0,column=5,padx=30,  pady=20)
+    bottom_frame_right.grid(row=2,  column=2,  padx=50,  pady=20)
+    Button(bottom_frame_right,command=lambda : reset(), text ='Nouvelle grille').grid(row=0,column=5,padx=30,  pady=20)
     lock(bottom_frame)
     lock(top_frame)
 
@@ -76,32 +88,32 @@ def init():
     global my_game
     my_game=Board()
     # Create left and right frames
+    Label(root, text="🧩 Sudoku Challenge", font=("Helvetica", 18), fg="white", bg="#0A2342").grid(row=0, column=0, columnspan=3, pady=10)
     bottom_frame  =  Frame(root,  width=200,  height=  400,  bg='#7f7f7f')
-    bottom_frame.grid(row=1,  column=1,  padx=50,  pady=20)
+    bottom_frame.grid(row=2,  column=1,  padx=50,  pady=20)
 
-    Button(bottom_frame, text ='Solution',command=solution).grid(row=0,column=1,padx=30,  pady=20)
+    Button(bottom_frame, text ='Solution',command=lambda : solution()).grid(row=0,column=1,padx=30,  pady=20)
 
     top_frame  =  Frame(root,  width=650,  height=400,  bg='#7f7f7f')
-    top_frame.grid(row=0,  column=1,  padx=50,  pady=20)
+    top_frame.grid(row=1,  column=1,  padx=50,  pady=20)
 
     left_frame  =  Frame(root,  width=200,  height=400,  bg='#7f7f7f')
-    left_frame.grid(row=0,  column=0,  padx=50,  pady=20)
+    left_frame.grid(row=1,  column=0,  padx=50,  pady=20)
 
     Label(left_frame,text='Choisir la difficulté').grid(row=0,column=0,padx=10,pady=10)
 
     for i in range(5):
         Button(left_frame,text=str(i+1),command=lambda i=i, top_frame=top_frame: generate(top_frame,i)).grid(row=i+1,column=0,padx=10,pady=10)
-    remplir(top_frame,my_game,soluce=False)
+    fill(top_frame,my_game,soluce=False)
     return (bottom_frame,top_frame,my_game)
-root = Tk(screenName='Soduku')
+root = Tk(screenName='Sudoku')
 root.title("Sudoku")
-root.minsize(300,300)
-root.eval('tk::PlaceWindow . center')
+center(root)
 root.config(bg='#0A2342')
 Gibberish=init()
 bottom_frame=Gibberish[0]
 top_frame=Gibberish[1]
-my_game=Gibberish[2]
+my_game:Board=Gibberish[2]
 my_game.set_terrain([
         [0,0,0,0,0,0,6,0,2],
         [0,6,2,8,7,0,0,3,4],
@@ -115,7 +127,7 @@ my_game.set_terrain([
     ]
 )
 
-remplir(top_frame,my_game,False)
+fill(top_frame,my_game,False)
 def generate(frame,i):
     global my_game
     if i==0:
@@ -129,22 +141,24 @@ def generate(frame,i):
     elif i==4:
         k=randint(54,64)
     my_game=sudoku_generator(k) # if we want multiple game, need a file parameter to store different solution
-    remplir(frame,my_game,False)
+    fill(frame,my_game,False)
     print(my_game)
 def choix_nombre(buttons,row,col):
     global my_game
     possible=my_game.terrain[row][col].possible
-    dlg = OptionDialog(root,'Select a number',"Close= reset ",possible)
-    buttons[row][col].config(text=str(dlg.result))
-    my_game.terrain[col][row].arrival(dlg.result)
-    if dlg.result!=0:
+    nbpck=number_picker(root,'Select a number',"Close= reset ",possible)
+    buttons[row][col].config(text=str(nbpck.result))
+    my_game.terrain[col][row].arrival(nbpck.result)
+    if nbpck.result!=0:
+        
+        
         my_game.terrain[col][row].base=True
     else :
         my_game.terrain[col][row].base=False
     color_picker(buttons[row][col], my_game.terrain[col][row])
-def lock(frame):
-    for widget in frame.winfo_children():
-        widget.config(state='disabled')
+def lock(item:Frame):
+        for widget in item.winfo_children():
+            widget.config(state='disabled')
 def reset():
     global bottom_frame, top_frame,my_game
     for widget in root.winfo_children():
@@ -153,23 +167,22 @@ def reset():
     # Call the init() function to reinitialize theBoard
     (bottom_frame, top_frame,my_game) = init()
 
-def main_menu():
-    root=Tk(screenName='Soduku')
-    root.title("Sudoku")
-    # root.minsize(300,300)
-    root.eval('tk::PlaceWindow . center')
-    root.config(bg='#0A2342')
-    left_frame  =  Frame(root,  width=200,  height=400,  bg='#7f7f7f')
-    left_frame.grid(row=0,  column=0,  padx=50,  pady=20)
-    Button(left_frame,text='Choisir la difficulté').grid(row=0,column=0,padx=10,pady=10)
-    right_frame  =  Frame(root,  width=200,  height=400,  bg='#7f7f7f')
-    right_frame.grid(row=0,  column=2,  padx=50,  pady=20)
-    Button(right_frame,command=lambda:init(), text='Solution').grid(row=0,column=0,padx=10,pady=10)
-    root.mainloop()
-main_menu()
+# def main_menu():
+#     root=Tk(screenName='Sudoku')
+#     root.title("Sudoku")
+#     # root.minsize(300,300)
+#     root.eval('tk::PlaceWindow . center')
+#     root.config(bg='#0A2342')
+#     left_frame  =  Frame(root,  width=200,  height=400,  bg='#7f7f7f')
+#     left_frame.grid(row=0,  column=0,  padx=50,  pady=20)
+#     Button(left_frame,text='Choisir la difficulté').grid(row=0,column=0,padx=10,pady=10)
+#     right_frame  =  Frame(root,  width=200,  height=400,  bg='#7f7f7f')
+#     right_frame.grid(row=0,  column=2,  padx=50,  pady=20)
+#     Button(right_frame,command=lambda:init(), text='Solution').grid(row=0,column=0,padx=10,pady=10)
+#     root.mainloop()
+'''
+    test for a main menu function 
+'''
+# main_menu()
 root.mainloop()
-# générer une grille reset
-# commentaires
-# déffinir le terrain pour le résoudre soi même+ vérif coloré dessus
-# vérif si la grille a une solution
-#Qand on génère une grille, automatiquement stocker le résultat
+# définir le terrain pour le résoudre soi même+ vérif coloré dessus

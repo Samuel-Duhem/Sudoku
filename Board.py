@@ -22,33 +22,40 @@ class Board:
         }
         self.filename=None
 
-    def save_soluce(self,item,filename):
+    def save_soluce(self,item,filename:str):
+        '''
+            - Save the item,usualy the Board itself at his complete stage, into "filename".pkl and store filename as self.filename
+            - Does not return anything
+        '''
         self.filename=filename
         f = open(self.filename, 'wb')
         pickle.dump(item, f)
         f.close
-        
-    def get_subdiv(self,i:int,j:int,pos=False):
-        '''
-            - Acces the subdiv of the i;j box 
-            - Return the subdiv of 2 coordinates.
-            If pos is enable, also return the position inside the subdiv    
-        '''
+    
     def get_soluce(self):
+        '''
+            - After the solution as been saved in a .pkl file , we take it back  
+            - If a solution, on the form of a board itself, as been saved, return it or None
+        '''
         if self.filename==None:
             print('No filename')
             return None
         with open(self.filename,'rb') as f:
             soluce=pickle.load(f)
             return soluce
-        
-
+    
+    def get_subdiv(self,i:int,j:int,pos=False):
+        '''
+            - Acces the subdiv of the i;j box 
+            - Return the subdiv of 2 coordinates.
+            If pos is enable, also return the position inside the subdiv    
+        '''
         row = i // 3
         col = j // 3
         if pos==True:
             return row*3 + col+1, i-row*3,j-col*3
         return row*3 + col+1
-        
+    
     def check_ligne(self,l:int,x:int):
         '''
             - A function that check if there is an occuration of a number in a ligne

@@ -62,17 +62,19 @@ def solve(j:Board):
                     else:
                         game.terrain[pointeur[0]][pointeur[1]].possible.pop(0)
                         direction=-1
+            game.update(pointeur[0],pointeur[1])
             avancer(pointeur,direction,game.terrain[pointeur[0]][pointeur[1]])
-            game.update()
+            
         else:
+            game.update(pointeur[0],pointeur[1])
             game.terrain[pointeur[0]][pointeur[1]].possible= [i for i in range(1,10) if i not in [j.terrain[pointeur[0]][pointeur[1]].occupant]]
             avancer(pointeur,direction,game.terrain[pointeur[0]][pointeur[1]],True)
-            game.update()
+            
         print(pointeur)
         if pointeur==[9,0,10]:
             j.save_soluce(game,'Soluce.pkl')
             
-            return j
+            return j.get_soluce()
         
 if __name__=="__main__":
     Game1=Board()
