@@ -1,6 +1,6 @@
 # Sudoku
 En:
-ere is my first app, coded entirely in Python to practice my skills.
+Here is my first app, coded entirely in Python to practice my skills.
 You can either define a Sudoku grid yourself and view the solution,
 or generate a Sudoku puzzle to solve on your own.
 Once you've filled it in, you can check if your answers are correct.
